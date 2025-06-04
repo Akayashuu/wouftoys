@@ -1,0 +1,55 @@
+{
+    "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+    "linter": {
+        "rules": {
+            "suspicious": {
+                "noConfusingVoidType": "off"
+            },
+            "style": {
+                "noParameterAssign": "off"
+            },
+            "complexity": {
+                "noStaticOnlyClass": "off",
+                "noThisInStatic": "off"
+            },
+            "correctness": {
+                "noUnreachable": "off"
+            }
+        },
+        "ignore": [
+            "web/src/**",
+            "core/dist/**",
+            "discord/dist/**",
+            "web/.svelte-kit/**",
+            "web/build/**"
+        ]
+    },
+    "formatter": {
+        "enabled": true,
+        "formatWithErrors": false,
+        "ignore": ["core/dist/**", "discord/dist/**", "web/**"],
+        "attributePosition": "auto",
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 100,
+        "lineEnding": "lf"
+    },
+    "javascript": {
+        "formatter": {
+            "arrowParentheses": "always",
+            "bracketSameLine": false,
+            "bracketSpacing": true,
+            "quoteProperties": "asNeeded",
+            "semicolons": "asNeeded",
+            "trailingCommas": "all"
+        }
+    },
+    "json": {
+        "formatter": {
+            "trailingCommas": "none"
+        }
+    },
+    "organizeImports": {
+        "ignore": ["core/dist/**", "discord/dist/**", "web/.svelte-kit/**", "web/build/**"]
+    }
+}
