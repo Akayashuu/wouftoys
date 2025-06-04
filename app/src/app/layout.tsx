@@ -5,6 +5,7 @@ import "./globals.css"
 import { CartProvider } from "@/lib/cart-context"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -21,6 +22,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="fr">
+            <Toaster />
             <body className={inter.className}>
                 <CartProvider>
                     <div className="min-h-screen flex flex-col">
