@@ -1,0 +1,12 @@
+FROM node:22
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+COPY pnpm-lock.yaml ./ 
+RUN npm install -g pnpm
+# Use --frozen-lockfile to ensure that the lockfile is used as is, without modifications
+RUN pnpm install --frozen-lockfile
+COPY . .
+# show where the files are copied
+RUN pnpm run build
