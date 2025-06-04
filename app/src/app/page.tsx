@@ -7,29 +7,38 @@ const featuredProducts = [
     {
         id: 1,
         name: "Balle rebondissante",
+        description: "Balle en caoutchouc très résistante. Diamètre : 6 cm.",
         price: 5.99,
+        stock: 20,
         image: "/placeholder.svg?height=300&width=300",
         rating: 4.8,
         reviews: 124,
-        badge: "🏆 Best-seller",
+        category: "Balles",
+        icon: "CircleIcon",
     },
     {
-        id: 4,
-        name: "Peluche renard",
-        price: 9.99,
+        id: 2,
+        name: "Corde à mâcher",
+        description: "Jouet en corde multicolore, longueur 25 cm.",
+        price: 7.49,
+        stock: 15,
         image: "/placeholder.svg?height=300&width=300",
-        rating: 4.9,
+        rating: 4.6,
         reviews: 89,
-        badge: "💝 Coup de cœur",
+        category: "Cordes",
+        icon: "Link",
     },
     {
-        id: 6,
-        name: "Jouet distributeur de friandises",
-        price: 12.99,
+        id: 3,
+        name: "Anneau solide",
+        description: "Anneau en plastique dur, parfait pour tirer et lancer.",
+        price: 6.99,
+        stock: 10,
         image: "/placeholder.svg?height=300&width=300",
-        rating: 4.7,
-        reviews: 156,
-        badge: "🧠 Intelligent",
+        rating: 4.5,
+        reviews: 67,
+        category: "Anneaux",
+        icon: "Circle",
     },
 ]
 
@@ -57,11 +66,13 @@ export default function HomePage() {
                                 </div>
                                 <h1 className="text-5xl lg:text-7xl font-black leading-tight">
                                     Wouf !<br />
-                                    <span className="text-yellow-200">Des jouets</span>
+                                    <span className="text-yellow-200">
+                                        Des jouets irrésistibles
+                                    </span>
                                     <br />
-                                    qui font vibrer
+                                    pour des chiens
                                     <br />
-                                    <span className="text-green-200">la queue !</span>
+                                    <span className="text-green-200">heureux et joueurs !</span>
                                 </h1>
                             </div>
                             <p className="text-xl lg:text-2xl text-orange-100 font-medium">

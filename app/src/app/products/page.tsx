@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select"
 import { Star, Zap, Filter, Grid, Award } from "lucide-react"
 import type { Product } from "@/lib/types"
-import { ProductCard } from "@/components/ui/alternate-product-card"
+import { ProductCard } from "@/components/ui/product-card"
 
 const products: Product[] = [
     {
