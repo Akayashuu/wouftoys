@@ -51,7 +51,7 @@ const getCategoryIcon = (category: string) => {
 export const ProductCard = ({ product, index }: ProductCardProps) => {
     const IconComponent = getCategoryIcon(product.category)
     return (
-        <Card className="group hover:shadow-2xl transition-all duration-500 border-0 bg-white rounded-3xl overflow-hidden transform hover:-translate-y-3 hover:rotate-1 p-0">
+        <Card className="group hover:shadow-2xl transition-all duration-500 border-0 bg-white rounded-lg overflow-hidden transform hover:-translate-y-3 hover:rotate-1 p-0">
             <CardContent className="p-0">
                 <div className="relative overflow-hidden">
                     <div className="w-full h-56 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
