@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,140 +8,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { useCart } from "@/lib/cart-context"
-import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Star, ShoppingCart, Heart, Truck, Shield } from "lucide-react"
+import { ArrowLeft, ShoppingCart, Heart, Truck, Shield } from "lucide-react"
 import { notFound } from "next/navigation"
 import { toast } from "sonner"
 import React from "react"
-
-const products = [
-    {
-        id: 1,
-        name: "Balle rebondissante",
-        description: "Balle en caoutchouc très résistante. Diamètre : 6 cm.",
-        price: 5.99,
-        stock: 20,
-        image: null,
-        rating: 4.8,
-        reviews: 124,
-        features: ["Caoutchouc résistant", "Diamètre 6 cm", "Rebond optimal", "Facile à nettoyer"],
-    },
-    {
-        id: 2,
-        name: "Corde à mâcher",
-        description: "Jouet en corde multicolore, longueur 25 cm.",
-        price: 7.49,
-        stock: 15,
-        image: "/placeholder.svg?height=500&width=500",
-        rating: 4.6,
-        reviews: 89,
-        features: [
-            "Corde multicolore",
-            "Longueur 25 cm",
-            "Aide au nettoyage des dents",
-            "Matériaux naturels",
-        ],
-    },
-    {
-        id: 3,
-        name: "Anneau solide",
-        description: "Anneau en plastique dur, parfait pour tirer et lancer.",
-        price: 6.99,
-        stock: 10,
-        image: "/placeholder.svg?height=500&width=500",
-        rating: 4.5,
-        reviews: 67,
-        features: [
-            "Plastique dur",
-            "Parfait pour tirer",
-            "Facile à lancer",
-            "Résistant aux morsures",
-        ],
-    },
-    {
-        id: 4,
-        name: "Peluche renard",
-        description: "Jouet en peluche avec couineur. Taille : 20 cm.",
-        price: 9.99,
-        stock: 12,
-        image: "/placeholder.svg?height=500&width=500",
-        rating: 4.9,
-        reviews: 156,
-        features: ["Peluche douce", "Couineur intégré", "Taille 20 cm", "Lavable en machine"],
-    },
-    {
-        id: 5,
-        name: "Frisbee en silicone",
-        description: "Souple et léger, diamètre 22 cm.",
-        price: 8.49,
-        stock: 10,
-        image: "/placeholder.svg?height=500&width=500",
-        rating: 4.7,
-        reviews: 98,
-        features: ["Silicone souple", "Diamètre 22 cm", "Ultra léger", "Flotte sur l'eau"],
-    },
-    {
-        id: 6,
-        name: "Jouet distributeur de friandises",
-        description: "À remplir avec des croquettes.",
-        price: 12.99,
-        stock: 8,
-        image: "/placeholder.svg?height=500&width=500",
-        rating: 4.8,
-        reviews: 134,
-        features: [
-            "Distributeur de friandises",
-            "Stimule l'intelligence",
-            "Facile à remplir",
-            "Matériaux sûrs",
-        ],
-    },
-    {
-        id: 7,
-        name: "Os en nylon",
-        description: "Pour chiens qui aiment mâcher.",
-        price: 4.99,
-        stock: 25,
-        image: "/placeholder.svg?height=500&width=500",
-        rating: 4.4,
-        reviews: 78,
-        features: ["Nylon résistant", "Aide au nettoyage des dents", "Longue durée", "Sans danger"],
-    },
-    {
-        id: 8,
-        name: "Balles lumineuses (lot de 2)",
-        description: "Clignotent lorsqu'on les lance.",
-        price: 10.99,
-        stock: 14,
-        image: "/placeholder.svg?height=500&width=500",
-        rating: 4.6,
-        reviews: 92,
-        features: ["Lot de 2 balles", "LED intégrées", "Activation au mouvement", "Étanches"],
-    },
-    {
-        id: 9,
-        name: "Jouet en forme de donut",
-        description: "Caoutchouc souple. Couleurs variées.",
-        price: 6.49,
-        stock: 18,
-        image: "/placeholder.svg?height=500&width=500",
-        rating: 4.5,
-        reviews: 65,
-        features: ["Forme donut", "Caoutchouc souple", "Couleurs variées", "Facile à saisir"],
-    },
-    {
-        id: 10,
-        name: "Jouet flottant",
-        description: "Idéal pour le jeu dans l'eau.",
-        price: 11.49,
-        stock: 9,
-        image: "/placeholder.svg?height=500&width=500",
-        rating: 4.7,
-        reviews: 87,
-        features: ["Flotte sur l'eau", "Matériaux étanches", "Couleurs vives", "Facile à repérer"],
-    },
-]
+import { useProducts } from "@/lib/product-context"
+import type { Product } from "@/lib/infrastructure/repository/ProductsRepository"
 
 interface ProductPageProps {
     params: {
@@ -150,24 +23,56 @@ interface ProductPageProps {
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const { id } = React.use(params)
     const [quantity, setQuantity] = useState(1)
+    const [productId, setProductId] = useState<string | null>(null)
+    const [product, setProduct] = useState<Product>({
+        id: "",
+        name: "",
+        description: "",
+        variants: [
+            {
+                id: "",
+                price: 0,
+                stockLevel: 0,
+            },
+        ],
+    })
     const { addToCart } = useCart()
+    const { getProductAsync } = useProducts()
 
-    const product = products.find((p) => p.id === Number.parseInt(id))
+    useEffect(() => {
+        const loadParams = async () => {
+            const resolvedParams = await params
+            setProductId(resolvedParams.id)
+        }
+        loadParams()
+    }, [params])
 
-    if (!product) {
-        notFound()
-    }
+    useEffect(() => {
+        const loadProduct = async () => {
+            if (!productId) return
+
+            try {
+                const productData = await getProductAsync(productId)
+                if (!productData) {
+                    notFound()
+                }
+                setProduct(productData)
+            } catch (error) {
+                console.error("Erreur lors du chargement du produit:", error)
+                notFound()
+            } finally {
+            }
+        }
+
+        loadProduct()
+    }, [productId, getProductAsync])
 
     const handleAddToCart = () => {
         addToCart({
-            id: product.id,
+            id: Number(product.variants[0].id),
             name: product.name,
-            price: product.price,
-            image: product.image || "/placeholder.svg?height=500&width=500",
+            price: product.variants[0].price,
             quantity: quantity,
         })
 
@@ -201,21 +106,11 @@ export default function ProductPage({ params }: ProductPageProps) {
                 {/* Image */}
                 <div className="space-y-4">
                     <div className="relative overflow-hidden rounded-lg flex items-center justify-center bg-gray-100 h-96 lg:h-[500px]">
-                        {product.image ? (
-                            <Image
-                                src={product.image}
-                                alt={product.name}
-                                width={500}
-                                height={500}
-                                className="w-full h-96 lg:h-[500px] object-cover"
-                            />
-                        ) : (
-                            <div className="flex flex-col items-center justify-center w-full h-full text-gray-400">
-                                <ShoppingCart className="w-24 h-24 mb-4" />
-                                <span>Aucune image</span>
-                            </div>
-                        )}
-                        {product.stock <= 10 && (
+                        <div className="flex flex-col items-center justify-center w-full h-full text-gray-400">
+                            <ShoppingCart className="w-24 h-24 mb-4" />
+                            <span>Aucune image</span>
+                        </div>
+                        {product.variants[0].stockLevel <= 10 && (
                             <Badge className="absolute top-4 left-4 bg-red-500">Stock limité</Badge>
                         )}
                     </div>
@@ -225,33 +120,21 @@ export default function ProductPage({ params }: ProductPageProps) {
                 <div className="space-y-6">
                     <div>
                         <h1 className="text-3xl lg:text-4xl font-bold mb-4">{product.name}</h1>
-                        <p className="text-gray-600 text-lg">{product.description}</p>
-                    </div>
-
-                    {/* Rating */}
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1">
-                            {[...Array(5)].map((_, i) => (
-                                <Star
-                                    key={i.toString()}
-                                    className={`h-5 w-5 ${
-                                        i < Math.floor(product.rating)
-                                            ? "text-yellow-400 fill-current"
-                                            : "text-gray-300"
-                                    }`}
-                                />
-                            ))}
-                        </div>
-                        <span className="text-lg font-medium">{product.rating}</span>
-                        <span className="text-gray-600">({product.reviews} avis)</span>
+                        <p
+                            className="text-gray-600 text-lg"
+                            // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+                            dangerouslySetInnerHTML={{ __html: product.description }}
+                        />
                     </div>
 
                     {/* Price */}
                     <div className="space-y-2">
                         <span className="text-3xl font-bold text-blue-600">
-                            {product.price.toFixed(2)} €
+                            {product.variants[0].price.toFixed(2)} €
                         </span>
-                        <p className="text-gray-600">Stock disponible : {product.stock} unités</p>
+                        <p className="text-gray-600">
+                            Stock disponible : {product.variants[0].stockLevel} unités
+                        </p>
                     </div>
 
                     {/* Quantity and Add to Cart */}
@@ -264,14 +147,14 @@ export default function ProductPage({ params }: ProductPageProps) {
                                         id="quantity"
                                         type="number"
                                         min="1"
-                                        max={product.stock}
+                                        max={product.variants[0].stockLevel}
                                         value={quantity}
                                         onChange={(e) =>
                                             setQuantity(
                                                 Math.max(
                                                     1,
                                                     Math.min(
-                                                        product.stock,
+                                                        product.variants[0].stockLevel,
                                                         Number.parseInt(e.target.value) || 1,
                                                     ),
                                                 ),
@@ -285,7 +168,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                                     <Button
                                         onClick={handleAddToCart}
                                         className="flex-1"
-                                        disabled={product.stock === 0}
+                                        disabled={product.variants[0].stockLevel <= 0}
                                     >
                                         <ShoppingCart className="mr-2 h-4 w-4" />
                                         Ajouter au panier
@@ -297,19 +180,6 @@ export default function ProductPage({ params }: ProductPageProps) {
                             </div>
                         </CardContent>
                     </Card>
-
-                    {/* Features */}
-                    <div className="space-y-4">
-                        <h3 className="text-xl font-semibold">Caractéristiques</h3>
-                        <ul className="space-y-2">
-                            {product.features.map((feature, index) => (
-                                <li key={index.toString()} className="flex items-center gap-2">
-                                    <div className="w-2 h-2 bg-blue-600 rounded-full" />
-                                    <span>{feature}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
 
                     {/* Shipping Info */}
                     <div className="space-y-4">

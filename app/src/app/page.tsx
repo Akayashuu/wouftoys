@@ -1,48 +1,35 @@
+"use client"
 import Image from "next/image"
 import { Play, Gift, Users, Award, Sparkles, Star } from "lucide-react"
 import { GradientButton } from "@/components/ui/button/gradient-button"
 import { ProductCard } from "@/components/ui/product-card"
-
-const featuredProducts = [
-    {
-        id: 1,
-        name: "Balle rebondissante",
-        description: "Balle en caoutchouc très résistante. Diamètre : 6 cm.",
-        price: 5.99,
-        stock: 20,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.8,
-        reviews: 124,
-        category: "Balles",
-        icon: "CircleIcon",
-    },
-    {
-        id: 2,
-        name: "Corde à mâcher",
-        description: "Jouet en corde multicolore, longueur 25 cm.",
-        price: 7.49,
-        stock: 15,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.6,
-        reviews: 89,
-        category: "Cordes",
-        icon: "Link",
-    },
-    {
-        id: 3,
-        name: "Anneau solide",
-        description: "Anneau en plastique dur, parfait pour tirer et lancer.",
-        price: 6.99,
-        stock: 10,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.5,
-        reviews: 67,
-        category: "Anneaux",
-        icon: "Circle",
-    },
-]
+import type { Product } from "@/lib/infrastructure/repository/ProductsRepository"
+import { useProducts } from "@/lib/product-context"
+import { notFound } from "next/navigation"
+import { useState, useEffect } from "react"
 
 export default function HomePage() {
+    const [products, setProduct] = useState<Product[]>([])
+    const { queryProductsWithLimit } = useProducts()
+
+    useEffect(() => {
+        const loadProduct = async () => {
+            try {
+                const productData = await queryProductsWithLimit(3)
+                if (!productData) {
+                    notFound()
+                }
+                setProduct(productData)
+            } catch (error) {
+                console.error("Erreur lors du chargement du produit:", error)
+                notFound()
+            } finally {
+            }
+        }
+
+        loadProduct()
+    }, [queryProductsWithLimit])
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
             {/* Hero Section */}
@@ -164,7 +151,7 @@ export default function HomePage() {
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-8">
-                        {featuredProducts.map((product, index) => (
+                        {products.map((product, index) => (
                             <ProductCard key={product.id} product={product} index={index} />
                         ))}
                     </div>

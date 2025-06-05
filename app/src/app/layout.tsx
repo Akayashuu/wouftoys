@@ -6,6 +6,7 @@ import { CartProvider } from "@/lib/cart-context"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { Toaster } from "@/components/ui/sonner"
+import { ProductProvider } from "@/lib/product-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -24,13 +25,15 @@ export default function RootLayout({
         <html lang="fr">
             <Toaster />
             <body className={inter.className}>
-                <CartProvider>
-                    <div className="min-h-screen flex flex-col">
-                        <Header />
-                        <main className="flex-1">{children}</main>
-                        <Footer />
-                    </div>
-                </CartProvider>
+                <ProductProvider>
+                    <CartProvider>
+                        <div className="min-h-screen flex flex-col">
+                            <Header />
+                            <main className="flex-1">{children}</main>
+                            <Footer />
+                        </div>
+                    </CartProvider>
+                </ProductProvider>
             </body>
         </html>
     )

@@ -9,134 +9,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Star, Zap, Filter, Grid, Award } from "lucide-react"
-import type { Product } from "@/lib/types"
+import { Zap, Filter, Grid, Award } from "lucide-react"
+import type { Product } from "@/lib/infrastructure/repository/ProductsRepository"
 import { ProductCard } from "@/components/ui/product-card"
+import ProductRepository from "@/lib/infrastructure/repository/ProductsRepository"
 
-const products: Product[] = [
-    {
-        id: 1,
-        name: "Balle rebondissante",
-        description: "Balle en caoutchouc très résistante. Diamètre : 6 cm.",
-        price: 5.99,
-        stock: 20,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.8,
-        reviews: 124,
-        category: "Balles",
-        icon: "CircleIcon",
-    },
-    {
-        id: 2,
-        name: "Corde à mâcher",
-        description: "Jouet en corde multicolore, longueur 25 cm.",
-        price: 7.49,
-        stock: 15,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.6,
-        reviews: 89,
-        category: "Cordes",
-        icon: "Link",
-    },
-    {
-        id: 3,
-        name: "Anneau solide",
-        description: "Anneau en plastique dur, parfait pour tirer et lancer.",
-        price: 6.99,
-        stock: 10,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.5,
-        reviews: 67,
-        category: "Anneaux",
-        icon: "Circle",
-    },
-    {
-        id: 4,
-        name: "Peluche renard",
-        description: "Jouet en peluche avec couineur. Taille : 20 cm.",
-        price: 9.99,
-        stock: 12,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.9,
-        reviews: 156,
-        category: "Peluches",
-        icon: "Heart",
-    },
-    {
-        id: 5,
-        name: "Frisbee en silicone",
-        description: "Souple et léger, diamètre 22 cm.",
-        price: 8.49,
-        stock: 10,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.7,
-        reviews: 98,
-        category: "Frisbees",
-        icon: "Disc3",
-    },
-    {
-        id: 6,
-        name: "Jouet distributeur de friandises",
-        description: "À remplir avec des croquettes.",
-        price: 12.99,
-        stock: 8,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.8,
-        reviews: 134,
-        category: "Puzzles",
-        icon: "Puzzle",
-    },
-    {
-        id: 7,
-        name: "Os en nylon",
-        description: "Pour chiens qui aiment mâcher.",
-        price: 4.99,
-        stock: 25,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.4,
-        reviews: 78,
-        category: "Os",
-        icon: "Bone",
-    },
-    {
-        id: 8,
-        name: "Balles lumineuses (lot de 2)",
-        description: "Clignotent lorsqu'on les lance.",
-        price: 10.99,
-        stock: 14,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.6,
-        reviews: 92,
-        category: "Balles",
-        icon: "Lightbulb",
-    },
-    {
-        id: 9,
-        name: "Jouet en forme de donut",
-        description: "Caoutchouc souple. Couleurs variées.",
-        price: 6.49,
-        stock: 18,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.5,
-        reviews: 65,
-        category: "Formes",
-        icon: "Donut",
-    },
-    {
-        id: 10,
-        name: "Jouet flottant",
-        description: "Idéal pour le jeu dans l'eau.",
-        price: 11.49,
-        stock: 9,
-        image: "/placeholder.svg?height=300&width=300",
-        rating: 4.7,
-        reviews: 87,
-        category: "Aquatiques",
-        icon: "Waves",
-    },
-]
-
-// Components
+const data = await ProductRepository.default().getProducts()
+const products = data ? data.data.products.items : []
 interface PageHeaderProps {
     productsCount: number
 }
@@ -195,12 +74,6 @@ const ProductFilters = ({ productsCount, sortBy, onSortChange }: ProductFiltersP
                     </SelectItem>
                     <SelectItem value="price-asc">Prix croissant</SelectItem>
                     <SelectItem value="price-desc">Prix décroissant</SelectItem>
-                    <SelectItem value="rating">
-                        <div className="flex items-center gap-2">
-                            <Star className="h-4 w-4" />
-                            Mieux notés
-                        </div>
-                    </SelectItem>
                 </SelectContent>
             </Select>
         </div>
@@ -246,15 +119,17 @@ export default function ProductsPage() {
 
         switch (sortBy) {
             case "price-asc":
-                return sorted.sort((a, b) => a.price - b.price)
+                return sorted.sort(
+                    (a, b) => (a.variants[0]?.price ?? 0) - (b.variants[0]?.price ?? 0),
+                )
             case "price-desc":
-                return sorted.sort((a, b) => b.price - a.price)
+                return sorted.sort(
+                    (a, b) => (b.variants[0]?.price ?? 0) - (a.variants[0]?.price ?? 0),
+                )
             case "name-asc":
                 return sorted.sort((a, b) => a.name.localeCompare(b.name))
             case "name-desc":
                 return sorted.sort((a, b) => b.name.localeCompare(a.name))
-            case "rating":
-                return sorted.sort((a, b) => b.rating - a.rating)
             default:
                 return sorted
         }
