@@ -11,6 +11,7 @@ import { useCart } from "@/lib/cart-context"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, ArrowRight, CreditCard, Truck } from "lucide-react"
 import Link from "next/link"
+import OrderRepository from "@/lib/infrastructure/repository/OrderRepository"
 
 const steps = [
     { id: 1, title: "Informations personnelles", icon: "👤" },
@@ -73,7 +74,10 @@ export default function CheckoutPage() {
     const handleNext = () => {
         if (validateStep(currentStep)) {
             if (currentStep === 3) {
-                handlePayment()
+                handlePayment().catch((error) => {
+                    console.error("Erreur lors du traitement du paiement :", error)
+                    setIsProcessing(false)
+                })
             } else {
                 setCurrentStep((prev) => prev + 1)
             }
@@ -83,8 +87,31 @@ export default function CheckoutPage() {
     const handlePayment = async () => {
         setIsProcessing(true)
 
-        // Simulation du paiement
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+        await OrderRepository.default().createOrderFromProducts({
+            products: items.map((item) => ({
+                variantId: item.variantId,
+                quantity: item.quantity,
+            })),
+            customer: {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                emailAddress: formData.email,
+            },
+            shippingAddress: {
+                fullName: `${formData.firstName} ${formData.lastName}`,
+                streetLine1: formData.address,
+                city: formData.city,
+                postalCode: formData.postalCode,
+                countryCode: "FR",
+            },
+            billingAddress: {
+                fullName: `${formData.firstName} ${formData.lastName}`,
+                streetLine1: formData.address,
+                city: formData.city,
+                postalCode: formData.postalCode,
+                countryCode: "FR",
+            },
+        })
 
         // Vider le panier et rediriger vers la confirmation
         clearCart()
@@ -194,6 +221,11 @@ export default function CheckoutPage() {
                                                 <p className="font-medium">Livraison standard</p>
                                                 <p className="text-sm text-gray-600">
                                                     2-3 jours ouvrés
+                                                </p>
+                                                <p className="text-xs text-gray-500 mt-1">
+                                                    Livraison standard : 4,99&nbsp;€
+                                                    <br />
+                                                    Livraison gratuite à partir de 50&nbsp;€
                                                 </p>
                                             </div>
                                         </div>

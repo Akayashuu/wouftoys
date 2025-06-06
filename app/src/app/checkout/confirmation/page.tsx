@@ -11,7 +11,7 @@ export default function ConfirmationPage() {
             <div className="max-w-2xl mx-auto text-center space-y-8">
                 {/* Success Icon */}
                 <div className="flex justify-center">
-                    <CheckCircle className="h-24 w-24 text-green-500" />
+                    <CheckCircle className="h-24 w-24 text-green-500" />/{" "}
                 </div>
 
                 {/* Thank You Message */}

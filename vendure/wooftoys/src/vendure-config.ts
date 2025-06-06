@@ -5,6 +5,8 @@ import {
     DefaultSchedulerPlugin,
     DefaultSearchPlugin,
     VendureConfig,
+    DefaultGuestCheckoutStrategy,
+    DefaultSessionCacheStrategy,
 } from "@vendure/core"
 import { defaultEmailHandlers, EmailPlugin, FileBasedTemplateLoader } from "@vendure/email-plugin"
 import { AssetServerPlugin } from "@vendure/asset-server-plugin"
@@ -18,6 +20,12 @@ const IS_DEV = process.env.APP_ENV === "dev"
 const serverPort = +process.env.PORT || 3000
 
 export const config: VendureConfig = {
+    orderOptions: {
+        guestCheckoutStrategy: new DefaultGuestCheckoutStrategy({
+            allowGuestCheckouts: false,
+            allowGuestCheckoutForRegisteredCustomers: false,
+        }),
+    },
     catalogOptions: {
         stockDisplayStrategy: new ExactStockDisplayStrategy(),
     },
@@ -44,7 +52,12 @@ export const config: VendureConfig = {
         cookieOptions: {
             secret: process.env.COOKIE_SECRET,
         },
+        sessionCacheStrategy: new DefaultSessionCacheStrategy({
+            ttl: 60 * 60 * 24, // 1 day
+            cachePrefix: "wooftoys-session",
+        }),
     },
+
     dbConnectionOptions: {
         type: "postgres",
         // See the README.md "Migrations" section for an explanation of

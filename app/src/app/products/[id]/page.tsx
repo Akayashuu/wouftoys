@@ -74,6 +74,7 @@ export default function ProductPage({ params }: ProductPageProps) {
             name: product.name,
             price: product.variants[0].price,
             quantity: quantity,
+            variantId: product.variants[0].id,
         })
 
         toast("Produit ajouté au panier", {
